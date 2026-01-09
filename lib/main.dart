@@ -4,6 +4,18 @@ import 'package:limit_kuota/hello_world.dart';
 import 'package:limit_kuota/network.dart';
 
 void main() {
-  runApp(const Network());
+  // Jalankan MyApp, bukan langsung Network
+  runApp(const MyApp()); 
 }
 
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false, // Opsional: hilangkan banner debug
+      home: Network(), // Network sekarang punya akses ke Directionality dari MaterialApp
+    );
+  }
+}
