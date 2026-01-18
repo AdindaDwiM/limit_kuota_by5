@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart'; // Import intl untuk format tanggal
+import 'package:limit_kuota/db_helper.dart'; // Import Database Helper
+import 'package:limit_kuota/history_page.dart'; // Import History Page
 
 class Network extends StatefulWidget {
   const Network({super.key});
@@ -20,6 +23,22 @@ class _NetworkState extends State<Network> {
       final Map<dynamic, dynamic> result = await platform.invokeMethod(
         'getTodayUsage',
       );
+
+      // --- LOGIKA PENYIMPANAN KE SQLITE ---
+      // Ambil tanggal hari ini dalam format YYYY-MM-DD
+      String todayDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+      // Ambil nilai integer (raw bytes) dari result
+      int wifiBytes = result['wifi'] ?? 0;
+      int mobileBytes = result['mobile'] ?? 0;
+
+      // Simpan ke database (akan update jika tanggal hari ini sudah ada)
+      await DatabaseHelper.instance.insertOrUpdate(
+        todayDate,
+        wifiBytes,
+        mobileBytes,
+      );
+      // ------------------------------------
 
       setState(() {
         wifiUsage = _formatBytes(result['wifi']);
@@ -42,9 +61,29 @@ class _NetworkState extends State<Network> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    fetchUsage();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Monitoring Data')),
+      appBar: AppBar(
+        title: const Text('Monitoring Data'),
+        actions: [
+          // Tombol untuk menuju halaman History
+          IconButton(
+            icon: const Icon(Icons.history),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const HistoryPage()),
+              );
+            },
+          ),
+        ],
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
