@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart'; // Import intl untuk format tanggal
 import 'package:limit_kuota/db_helper.dart'; // Import Database Helper
+import 'package:limit_kuota/helper.dart';
 import 'package:limit_kuota/history_page.dart'; // Import History Page
 
 class Network extends StatefulWidget {
@@ -60,6 +61,38 @@ class _NetworkState extends State<Network> {
     return "${mb.toStringAsFixed(2)} MB";
   }
 
+  Future<void> checkLimitAndWarn(int currentUsage) async {
+    // 1024 MB dalam Bytes
+    int limitInBytes = 1024 * 1024 * 1024;
+
+    if (currentUsage >= limitInBytes) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("Batas Kuota Tercapai!"),
+          content: const Text(
+            "Penggunaan data Anda sudah mencapai mencapai limit. "
+            "Sistem Android tidak mengizinkan aplikasi mematikan internet secara otomatis. "
+            "Silakan aktifkan 'Set Data Limit' di pengaturan sistem agar koneksi terputus otomatis.",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Nanti"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                IntentHelper.openDataLimitSettings();
+              },
+              child: const Text("Buka Pengaturan"),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -96,6 +129,11 @@ class _NetworkState extends State<Network> {
               onPressed: fetchUsage,
               icon: const Icon(Icons.refresh),
               label: const Text('Refresh Data'),
+            ),
+            ElevatedButton(
+              onPressed: () => IntentHelper.openDataLimitSettings(),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+              child: const Text("Atur Batas Kuota di Sistem"),
             ),
           ],
         ),
