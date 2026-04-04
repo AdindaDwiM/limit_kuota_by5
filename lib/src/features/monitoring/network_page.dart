@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart'; // Import intl untuk format tanggal
-import 'package:limit_kuota/db_helper.dart'; // Import Database Helper
-import 'package:limit_kuota/helper.dart';
-import 'package:limit_kuota/history_page.dart'; // Import History Page
+import 'package:limit_kuota/src/core/data/database_helper.dart'; // Import Database Helper
+import 'package:limit_kuota/src/core/services/intent_helper.dart';
+import 'package:limit_kuota/src/features/monitoring/history_page.dart'; // Import History Page
 
 class Network extends StatefulWidget {
   const Network({super.key});
