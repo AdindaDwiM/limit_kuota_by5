@@ -1,16 +1,10 @@
-// main.dart
 import 'package:flutter/material.dart';
-import 'package:limit_kuota_by5/src/core/data/services/notification_service.dart';
-import 'package:limit_kuota_by5/src/features/home/home_screen.dart';
+import 'package:limit_kuota_by5/src/features/monitoring/network_page.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await NotificationService.init();
-
+void main() {
   runApp(const MyApp());
 }
 
-// ✅ tambahkan const constructor
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -18,7 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      home: Network(),
     );
   }
 }
